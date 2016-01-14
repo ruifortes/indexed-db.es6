@@ -69,10 +69,10 @@ export default class Database {
      * @type {Set<function(number)>}
      */
     this[FIELDS.versionChangeListeners] = new Set()
-    
+
     /**
      * The transactions that currently are in progress.
-     * 
+     *
      * @type {Set<ReadOnlyTransaction>}
      */
     this[FIELDS.activeTransactions] = new Set()
@@ -89,16 +89,16 @@ export default class Database {
       })
     }
 
-    this.addVersionChangeListener(() => {
-      if (this[FIELDS.versionChangeListeners].size !== 1) {
-        return
-      }
-
-      console.warn("The database just received a versionchange event, but " +
-          "no custom event listener has been registered for this event. " +
-          "The connection to the database will therefore remain open and " +
-          "the database upgrade will be blocked")
-    })
+    // this.addVersionChangeListener(() => {
+    //   if (this[FIELDS.versionChangeListeners].size !== 1) {
+    //     return
+    //   }
+    //
+    //   console.warn("The database just received a versionchange event, but " +
+    //       "no custom event listener has been registered for this event. " +
+    //       "The connection to the database will therefore remain open and " +
+    //       "the database upgrade will be blocked")
+    // })
   }
 
   /**
@@ -143,21 +143,21 @@ export default class Database {
     if (objectStoreNames[0] instanceof Array) {
       objectStoreNames = objectStoreNames[0]
     }
-    
+
     let nativeTransaction = this[FIELDS.database].transaction(
       objectStoreNames,
       TRANSACTION_MODES.READ_WRITE
     )
-    
+
     let transaction = new Transaction(nativeTransaction, (objectStoreName) => {
       return this.startReadOnlyTransaction(objectStoreName)
     })
-    
+
     this[FIELDS.activeTransactions].add(transaction)
     transaction.completionPromise.catch(() => {}).then(() => {
       this[FIELDS.activeTransactions].delete(transaction)
     })
-    
+
     return transaction
   }
 
@@ -186,22 +186,22 @@ export default class Database {
     if (objectStoreNames[0] instanceof Array) {
       objectStoreNames = objectStoreNames[0]
     }
-    
+
     let nativeTransaction = this[FIELDS.database].transaction(
       objectStoreNames,
       TRANSACTION_MODES.READ_ONLY
     )
-    
+
     let transaction = new ReadOnlyTransaction(nativeTransaction,
         (objectStoreName) => {
       return this.startReadOnlyTransaction(objectStoreName)
     })
-    
+
     this[FIELDS.activeTransactions].add(transaction)
     transaction.completionPromise.catch(() => {}).then(() => {
       this[FIELDS.activeTransactions].delete(transaction)
     })
-    
+
     return transaction
   }
 
@@ -221,19 +221,19 @@ export default class Database {
     let transaction = this.startReadOnlyTransaction(objectStoreName)
     return transaction.getObjectStore(objectStoreName)
   }
-  
+
   /**
    * Runs the provided transaction operations on the specified object stores
    * in a new read-write transaction.
-   * 
+   *
    * The created transaction will have an exclusive lock on the specified
    * object store, allowing no other, read-only or read-write, transaction to
    * access any of them until this transaction is finished. Any transaction
    * created after this one with access to any of the same object stores will
    * queue its operations and wait for this transaction to finish.
-   * 
+   *
    * The method returns a promise resolved when the transaction completes.
-   * 
+   *
    * @param {string|string[]} objectStoreNames The name(s) of the object stores
    *        to pass to the {@linkcode transactionOperations} callback, or an
    *        array containing a single item - the array of object store names.
@@ -257,22 +257,22 @@ export default class Database {
     if (typeof objectStoreNames === "string") {
       objectStoreNames = [objectStoreNames]
     }
-    
+
     let transaction = this.startTransaction(...objectStoreNames)
     return runTransaction(transaction, objectStoreNames, transactionOperations)
   }
-  
+
   /**
    * Runs the provided transaction operations on the specified object stores
    * in a new read-only transaction.
-   * 
+   *
    * The created transaction will have a shared lock on the specified object
    * store, allowing other read-only transaction to access the same object
    * stores simultaneously, but blocking any ready-write transaction with
    * access to any object store until this transaction is finished.
-   * 
+   *
    * The method returns a promise resolved when the transaction completes.
-   * 
+   *
    * @param {string|string[]} objectStoreNames The name(s) of the object stores
    *        to pass to the {@linkcode transactionOperations} callback, or an
    *        array containing a single item - the array of object store names.
@@ -296,7 +296,7 @@ export default class Database {
     if (typeof objectStoreNames === "string") {
       objectStoreNames = [objectStoreNames]
     }
-    
+
     let transaction = this.startReadOnlyTransaction(...objectStoreNames)
     return runTransaction(transaction, objectStoreNames, transactionOperations)
   }
@@ -307,21 +307,21 @@ export default class Database {
    * The connection is closed asynchronously, but no more operations can be
    * made using this connection once this method is called, even using the
    * still active transactions.
-   * 
+   *
    * The promise returned by this method resolves once all pending transactions
    * started from this connection are completed (the connection is not actually
    * closed until all pending transactions are completed).
-   * 
+   *
    * Note that any pending {@code versionchange} transactions (database schema
    * upgrades or database deletions) will not happen until the connection is
    * actually closed (after the returned promise returns).
-   * 
+   *
    * @return {Promise<undefined>} A promise resolved when all pending
    *         transactions are completed.
    */
   close() {
     this[FIELDS.database].close()
-    
+
     let transactions = Array.from(this[FIELDS.activeTransactions])
     return Promise.all(transactions.map((transaction) => {
       return transaction.completionPromise
@@ -332,9 +332,9 @@ export default class Database {
 /**
  * Runs the provided transaction operations on the specified object stores
  * obtained from the provided transaction.
- * 
+ *
  * The function returns a promise resolved when the transaction completes.
- * 
+ *
  * @param {ReadOnlyTransaction} transaction The transaction from which the
  *        object stores will be retrieved. The returned promise will resolve
  *        when this transaction is completed.
@@ -359,7 +359,7 @@ function runTransaction(transaction, objectStoreNames, transactionOperations) {
     return transaction.getObjectStore(objectStoreName)
   })
   callbackArguments.push(() => transaction.abort())
-  
+
   let resultPromise = transactionOperations(...callbackArguments)
   return Promise.resolve(resultPromise).then((result) => {
     return transaction.completionPromise.then(() => result)
