@@ -217,9 +217,9 @@ export default class Database {
    *        store using a new read-only transaction.
    * @see startReadOnlyTransaction(...objectStoreNames)
    */
-  getObjectStore(objectStoreName) {
+  getStore(objectStoreName) {
     let transaction = this.startReadOnlyTransaction(objectStoreName)
-    return transaction.getObjectStore(objectStoreName)
+    return transaction.getStore(objectStoreName)
   }
 
   /**
@@ -356,7 +356,7 @@ export default class Database {
  */
 function runTransaction(transaction, objectStoreNames, transactionOperations) {
   let callbackArguments = objectStoreNames.map((objectStoreName) => {
-    return transaction.getObjectStore(objectStoreName)
+    return transaction.getStore(objectStoreName)
   })
   callbackArguments.push(() => transaction.abort())
 

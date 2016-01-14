@@ -31,7 +31,7 @@ export default class ReadOnlyObjectStore extends AbstractReadOnlyStorage {
   constructor(storage, cursorConstructor, transactionFactory) {
     let storageFactory = () => {
       let transaction = transactionFactory()
-      return transaction.getObjectStore(storage.name)
+      return transaction.getStore(storage.name)
     }
     super(storage, cursorConstructor, storageFactory)
 

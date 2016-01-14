@@ -18,7 +18,7 @@ export default class Index extends ReadOnlyIndex {
   constructor(storage, transactionFactory) {
     let storageFactory = () => {
       let transaction = transactionFactory()
-      let objectStore = transaction.getObjectStore(storage.objectStore.name)
+      let objectStore = transaction.getStore(storage.objectStore.name)
       return objectStore.index(storage.name)
     }
     super(storage, Cursor, storageFactory)

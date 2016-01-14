@@ -62,7 +62,7 @@ export default class Transaction extends ReadOnlyTransaction {
    * @param {string} objectStoreName The name of the object store to retrieve.
    * @return {ObjectStore} The object store.
    */
-  getObjectStore(objectStoreName) {
+  getStore(objectStoreName) {
     if (this[FIELDS.objectStores].has(objectStoreName)) {
       return this[FIELDS.objectStores].get(objectStoreName)
     }

@@ -67,7 +67,7 @@ export default class RecordFetcher {
 function fetchAllRecords(transaction, objectStores) {
   return PromiseSync.all(objectStores.map((descriptor) => {
     return fetchRecords(
-      transaction.getObjectStore(descriptor.objectStore),
+      transaction.getStore(descriptor.objectStore),
       descriptor.preprocessor
     )
   })).then((fetchedRecords) => {

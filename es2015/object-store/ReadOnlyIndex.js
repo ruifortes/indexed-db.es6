@@ -42,7 +42,7 @@ export default class ReadOnlyIndex extends AbstractReadOnlyStorage {
   constructor(storage, cursorConstructor, transactionFactory) {
     let storageFactory = () => {
       let transaction = transactionFactory()
-      let objectStore = transaction.getObjectStore(storage.objectStore.name)
+      let objectStore = transaction.getStore(storage.objectStore.name)
       return objectStore.index(storage.name)
     }
     super(storage, cursorConstructor, storageFactory)

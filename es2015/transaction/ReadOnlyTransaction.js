@@ -135,7 +135,7 @@ export default class ReadOnlyTransaction {
    *
    * The order in which the event listeners will be executed is undefined and
    * should not be relied upon.
-   * 
+   *
    * This method provides a more low-level access to the transaction lifecycle
    * which can be useful in certain situations, however, it is recommended to
    * use the {@linkcode completionPromise} instead as it makes promise chaining
@@ -153,7 +153,7 @@ export default class ReadOnlyTransaction {
    *
    * The order in which the event listeners will be executed is undefined and
    * should not be relied upon.
-   * 
+   *
    * This method provides a more low-level access to the transaction lifecycle
    * which can be useful in certain situations, however, it is recommended to
    * use the {@linkcode completionPromise} instead as it makes promise chaining
@@ -173,7 +173,7 @@ export default class ReadOnlyTransaction {
    *
    * The order in which the event listeners will be executed is undefined and
    * should not be relied upon.
-   * 
+   *
    * This method provides a more low-level access to the transaction lifecycle
    * which can be useful in certain situations, however, it is recommended to
    * use the {@linkcode completionPromise} instead as it makes promise chaining
@@ -202,7 +202,7 @@ export default class ReadOnlyTransaction {
    * @param {string} objectStoreName The name of the object store to retrieve.
    * @return {ReadOnlyObjectStore} The object store.
    */
-  getObjectStore(objectStoreName) {
+  getStore(objectStoreName) {
     if (this[FIELDS.objectStores].has(objectStoreName)) {
       return this[FIELDS.objectStores].get(objectStoreName)
     }
